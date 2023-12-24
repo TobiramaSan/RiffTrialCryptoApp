@@ -71,6 +71,7 @@ const CoinDetailsScreen = () => {
   const changeCaret = price_change_percentage_24h < 0 ? "caretdown" : "caretup";
 
   const {
+    id,
     image: { small },
     name,
     symbol,
@@ -101,6 +102,7 @@ const CoinDetailsScreen = () => {
     <View style={{ paddingHorizontal: 10 }}>
       <LineChart.Provider data={truePrice}>
         <CoinDetailsHeader
+          coinId={id}
           small={small}
           symbol={symbol}
           market_cap_rank={market_cap_rank}

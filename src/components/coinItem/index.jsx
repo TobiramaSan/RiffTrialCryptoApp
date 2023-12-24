@@ -18,6 +18,8 @@ const CoinItem = ({ coin }) => {
 
   const navigation = useNavigation();
 
+  const careColor = price_change_percentage_24h < 0 ? "#ea3943" : "#16c784";
+
   const normalizeMarketCap = (marketCap) => {
     if (marketCap > 1_000_000_000_000) {
       return `${Math.floor(marketCap / 1_000_000_000_000)} T`;
@@ -27,14 +29,14 @@ const CoinItem = ({ coin }) => {
     }
     if (marketCap > 1_000_000) {
       return `${Math.floor(marketCap / 1_000_000)} M`;
-    } else {
-      return `${Math.floor(marketCap / 1_000_000)} K`;
     }
+    if (marketCap > 1_000) {
+      return `${Math.floor(marketCap / 1_000)} K`;
+    }
+    return marketCap;
   };
 
   const changeCaret = price_change_percentage_24h < 0 ? "caretdown" : "caretup";
-
-  const careColor = price_change_percentage_24h < 0 ? "#ea3943" : "#16c784";
 
   return (
     <Pressable
@@ -53,7 +55,7 @@ const CoinItem = ({ coin }) => {
           <View style={styles.rankContainer}>
             <Text style={styles.ranK}>{market_cap_rank}</Text>
           </View>
-          <Text style={styles.text}>{symbol.toUpperCase()}</Text>
+          <Text style={styles.text}>{symbol?.toUpperCase()}</Text>
           <AntDesign
             name={changeCaret}
             size={12}
@@ -61,7 +63,7 @@ const CoinItem = ({ coin }) => {
             style={{ alignSelf: "center", marginRight: 5 }}
           />
           <Text style={{ color: careColor }}>
-            {price_change_percentage_24h.toFixed(2)}%
+            {price_change_percentage_24h?.toFixed(2)}%
           </Text>
         </View>
       </View>

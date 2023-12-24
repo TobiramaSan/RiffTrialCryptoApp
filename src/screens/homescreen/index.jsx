@@ -7,7 +7,20 @@ const HomeScreen = () => {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchCoins = async () => {
+  const fetchCoins = async (pageNumber) => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    const coinsData = await getMarketData(pageNumber);
+    setCoins((existingCoins) => [...existingCoins, ...coinsData]); //adding  the  to the array of existingCoins and coinData.
+    setLoading(false);
+  };
+
+  const reFetchCoins = async () => {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     const coinsData = await getMarketData();
     setCoins(coinsData);
@@ -21,14 +34,15 @@ const HomeScreen = () => {
   return (
     <FlatList
       data={coins}
-      renderItem={({ item }) => (
-        <CoinItem
-          coin={item}
-          refreshControl={
-            <RefreshControl refreshing={loading} tintColor="white" />
-          }
+      renderItem={({ item }) => <CoinItem coin={item} />}
+      onEndReached={() => fetchCoins(coins.length / 50 + 1)}
+      refreshControl={
+        <RefreshControl
+          refreshing={loading}
+          tintColor="white"
+          onRefresh={reFetchCoins}
         />
-      )}
+      }
     />
   );
 };

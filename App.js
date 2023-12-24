@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Navigation from "./src/navigation";
+import WatchListProvider from "./src/context/watchListContext";
 
 export default function App() {
   return (
@@ -14,12 +15,14 @@ export default function App() {
       }}
     >
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <Navigation />
-          {/* <HomeScreen /> */}
-          {/* <CoinDetailsScreen /> */}
-          <StatusBar style="light" />
-        </View>
+        <WatchListProvider>
+          <View style={styles.container}>
+            <Navigation />
+            {/* <HomeScreen /> */}
+            {/* <CoinDetailsScreen /> */}
+            <StatusBar style="light" />
+          </View>
+        </WatchListProvider>
       </GestureHandlerRootView>
     </NavigationContainer>
   );
