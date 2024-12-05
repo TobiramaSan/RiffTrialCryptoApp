@@ -12,9 +12,14 @@ const HomeScreen = () => {
       return;
     }
     setLoading(true);
-    const coinsData = await getMarketData(pageNumber);
-    setCoins((existingCoins) => [...existingCoins, ...coinsData]); //adding  the  to the array of existingCoins and coinData.
-    setLoading(false);
+    try {
+      const coinsData = await getMarketData(pageNumber);
+      console.log(coinsData, "coinsData");
+      setCoins((existingCoins) => [...existingCoins, ...coinsData]); //adding  the  to the array of existingCoins and coinData.
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const reFetchCoins = async () => {

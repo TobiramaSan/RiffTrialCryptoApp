@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import debounce from "lodash.debounce";
 import {
   View,
   Text,
@@ -33,7 +34,7 @@ const CoinDetailsScreen = () => {
   const {
     params: { coinId },
   } = route;
-  console.log(coinId);
+  // console.log(coinId);
 
   const [coinValue, setCoinValue] = useState("1");
   const [usdValue, setUsdValue] = useState("");
@@ -44,14 +45,20 @@ const CoinDetailsScreen = () => {
     const fetchedCoinMarketChart = await getCoinMarketChart(coinId);
     setCoin(fetchedCoinData);
     setCoinMarketData(fetchedCoinMarketChart);
-    setUsdValue(fetchedCoinData.market_data.current_price.usd.toString());
+    setUsdValue(fetchedCoinData?.market_data.current_price.usd.toString());
     setLoading(false);
   };
+
+  const debouncedFetchCoinData = debounce(fetchCoinData, 500); // 500ms delay
+
+  useEffect(() => {
+    debouncedFetchCoinData();
+  }, [coinId]);
 
   // make fetch on render
   useEffect(() => {
     fetchCoinData();
-  }, []);
+  }, [coinId]);
 
   // check to see if the data has been  fetched
   if (loading || !coin || !coinMarketData) {

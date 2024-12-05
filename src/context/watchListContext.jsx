@@ -13,7 +13,7 @@ const WatchListProvider = ({ children }) => {
       const jsonValue = await AsyncStorage.getItem("@watchlist_coins");
       setWatchListCoinIds(jsonValue !== null ? JSON.parse(jsonValue) : []); //because  we can only store strings in AsyncStorage
     } catch (e) {
-      console.log(e);
+      console.log(e, "getWatchListData");
     }
   };
 
@@ -30,7 +30,7 @@ const WatchListProvider = ({ children }) => {
       await AsyncStorage.setItem("@watchlist_coins", jsonValue);
       setWatchListCoinIds(newWatchList);
     } catch (e) {
-      console.log(e);
+      console.log(e, "storewatchListCoinIds");
     }
   };
 

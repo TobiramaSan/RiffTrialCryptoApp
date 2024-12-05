@@ -7,7 +7,7 @@ export const getDetailedCoinData = async (coinId) => {
     );
     return response.data;
   } catch (e) {
-    console.log(e);
+    console.log("getdetailedCoinData", e);
   }
 };
 
@@ -18,7 +18,7 @@ export const getCoinMarketChart = async (coinId) => {
     );
     return response.data;
   } catch (e) {
-    console.log(e);
+    console.log(e, "getCoinMarketChart");
   }
 };
 
@@ -31,7 +31,7 @@ export const getMarketData = async (pageNumber = 1) => {
     // const data = response.json();
     // console.log(data);
   } catch (e) {
-    console.log(e);
+    console.log(e, "getMarketData");
   }
 };
 
@@ -42,6 +42,6 @@ export const getWatchlistedCoins = async (pageNumber, coinIds) => {
     );
     return response.data;
   } catch (e) {
-    console.log(e);
+    console.log(e, "getWatchListCoins");
   }
 };

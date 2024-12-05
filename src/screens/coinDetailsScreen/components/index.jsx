@@ -9,7 +9,7 @@ const CoinDetailsHeader = (props) => {
   const { coinId, small, symbol, market_cap_rank } = props;
   const navigation = useNavigation();
 
-  console.log(watchListCoinIds);
+  // console.log(watchListCoinIds);
 
   const { watchListCoinIds, storeWatchListCoinId, removeWatchListCoinId } =
     useWatchList();
