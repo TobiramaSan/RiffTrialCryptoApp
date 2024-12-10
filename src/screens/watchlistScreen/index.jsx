@@ -1,35 +1,41 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, RefreshControl } from "react-native";
+import { FlatList, RefreshControl } from "react-native";
 import { useWatchList } from "../../context/watchListContext";
 import CoinItem from "../../components/coinItem";
 import { getWatchlistedCoins } from "../../services/request";
 
 const WatchlistScreen = () => {
-  const { watchListCoinIds } = useWatchList(); //get global data
+  const { watchListCoinIds } = useWatchList(); // Get global data
 
-  const [coins, setcoins] = useState([]);
+  const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const transformCoinIds = () => watchListCoinIds.join("%2C");
+  const transformCoinIds = () =>
+    watchListCoinIds.length ? watchListCoinIds.join("%2C") : "";
 
   const fetchWatchlistedCoins = async () => {
-    if (loading) {
+    if (loading) return;
+
+    if (!watchListCoinIds.length) {
+      // If no coins are in the watchlist, clear the state
+      setCoins([]);
+      setLoading(false);
       return;
     }
-    setLoading(true);
-    const watchListedCoinsData = await getWatchlistedCoins(
-      1,
-      transformCoinIds()
-    );
-    // setcoins((existingCoins) => [...existingCoins, watchListedCoinsData]);
-    setcoins(watchListedCoinsData);
-    setLoading(false);
-    // console(watchListedCoinsData);
-  };
 
-  // useEffect(() => {
-  //   fetchWatchlistedCoins();
-  // }, []);
+    setLoading(true);
+    try {
+      const watchListedCoinsData = await getWatchlistedCoins(
+        1,
+        transformCoinIds()
+      );
+      setCoins(watchListedCoinsData || []); // Fallback to empty array if API returns undefined
+    } catch (error) {
+      console.error("Error fetching watchlisted coins:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchWatchlistedCoins();
@@ -39,6 +45,7 @@ const WatchlistScreen = () => {
     <FlatList
       data={coins}
       renderItem={({ item }) => <CoinItem coin={item} />}
+      keyExtractor={(item) => item.id} // Ensure each item has a unique key
       refreshControl={
         <RefreshControl
           refreshing={loading}

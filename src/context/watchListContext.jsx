@@ -1,53 +1,69 @@
 import React, { useContext, createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// Create the context
 const WatchListContext = createContext();
 
+// Hook to access the context
 export const useWatchList = () => useContext(WatchListContext);
 
+// Provider component
 const WatchListProvider = ({ children }) => {
   const [watchListCoinIds, setWatchListCoinIds] = useState([]);
 
+  // Fetch watchlist data from AsyncStorage
   const getWatchListData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem("@watchlist_coins");
-      setWatchListCoinIds(jsonValue !== null ? JSON.parse(jsonValue) : []); //because  we can only store strings in AsyncStorage
+      if (jsonValue) {
+        setWatchListCoinIds(JSON.parse(jsonValue));
+      }
     } catch (e) {
-      console.log(e, "getWatchListData");
+      console.error("Error fetching watchlist data:", e);
     }
   };
 
+  // Store a new coin ID in the watchlist
+  const storeWatchListCoinId = async (coinId) => {
+    try {
+      setWatchListCoinIds((prevList) => {
+        const newWatchList = [...prevList, coinId];
+        AsyncStorage.setItem("@watchlist_coins", JSON.stringify(newWatchList));
+        return newWatchList;
+      });
+    } catch (e) {
+      console.error("Error storing coin ID:", e);
+    }
+  };
+
+  // Remove a coin ID from the watchlist
+  const removeWatchListCoinId = async (coinId) => {
+    try {
+      setWatchListCoinIds((prevList) => {
+        const newWatchList = prevList.filter(
+          (coinIdValue) => coinIdValue !== coinId
+        );
+        AsyncStorage.setItem("@watchlist_coins", JSON.stringify(newWatchList));
+        return newWatchList;
+      });
+    } catch (e) {
+      console.error("Error removing coin ID:", e);
+    }
+  };
+
+  // Fetch data on component mount
   useEffect(() => {
     getWatchListData();
   }, []);
 
-  //function to store values
-  const storeWatchListCoinId = async (coinId) => {
-    //to know  what coin to store, pass in an id parameter
-    try {
-      const newWatchList = [...watchListCoinIds, coinId];
-      const jsonValue = JSON.stringify(newWatchList);
-      await AsyncStorage.setItem("@watchlist_coins", jsonValue);
-      setWatchListCoinIds(newWatchList);
-    } catch (e) {
-      console.log(e, "storewatchListCoinIds");
-    }
-  };
-
-  //function to remove from watchlist
-  const removeWatchListCoinId = async (coinId) => {
-    //it needs too know the coin to  remove, that's why coinId is passed in  it
-    const newWatchList = watchListCoinIds.filter((coinIdValue) => {
-      coinIdValue !== coinId;
-    });
-    const jsonValue = JSON.stringify(newWatchList);
-    await AsyncStorage.setItem("@watchlist_coins", jsonValue);
-    setWatchListCoinIds(newWatchList);
-  };
-
+  // Provide context values
   return (
     <WatchListContext.Provider
-      value={{ watchListCoinIds, storeWatchListCoinId, removeWatchListCoinId }}
+      value={{
+        watchListCoinIds,
+        storeWatchListCoinId,
+        removeWatchListCoinId,
+      }}
     >
       {children}
     </WatchListContext.Provider>
